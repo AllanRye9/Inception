@@ -1,0 +1,77 @@
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./requirements/nginx/
+      dockerfile: Dockerfile
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    networks:
+      - inception-network
+    volumes:
+      - wp-volume:/var/www/
+    restart: always
+
+  wordpress:
+    container_name: wordpress
+    build:
+      context: ./requirements/wordpress/
+      dockerfile: Dockerfile
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+    depends_on:
+      - mariadb
+    restart: always
+    volumes:
+      - wp-volume:/var/www/
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    expose:
+      - "9000"
+
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ./requirements/mariadb/
+      dockerfile: Dockerfile
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+        DB_ROOT: ${DB_ROOT}
+    volumes:
+      - db-volume:/var/lib/mysql
+    restart: always
+    networks:
+      - inception-network
+    expose:
+      - "3306"
+    env_file:
+      - .env
+
+volumes:
+  wp-volume:
+  db-volume:
+
+# volumes:
+#   wp-volume:
+#     driver_opts:
+#       o: 'bind'
+#       type: 'none'
+#       device: '/home/oallan/data/wordpress-volume'
+  
+#   db-volume:
+#     driver_opts:
+#       o: 'bind'
+#       type: 'none'
+#       device: '/home/oallan/data/mariadb-volume'
+
+networks:
+    inception-network:
+      driver: bridge

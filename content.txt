@@ -1,0 +1,16 @@
+# Database
+DB_PASS=18
+DB_NAME=mariadb
+DB_USER=42inception
+DB_ROOT=42
+
+# WordPress
+DB_NAME=wordpress
+DB_USER=42database
+DB_PASS=20
+DOMAIN_NAME=oallan.42.fr
+WPADUSER=42
+WPADPASS=19
+WPADEMAIL=42@example.com
+WORDPRESS-VOLUME=/home/oallan/data/wordpress-volume
+MARIADB-VOLUME=/home/oallan/data/mariadb-volume
