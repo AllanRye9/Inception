@@ -1,8 +1,13 @@
 # Database
-DB_PASS=18
-DB_NAME=mariadb
-DB_ROOT_PASS=42inception
-DB_ROOT=42
+mysql_password=4444
+database_name=mariadb
+mysql_root_password=42
+mysql_root_user=root
+mysql_user=root
+DB_HOST=mariadb:3306
+DB_NAME=wordpress
+DB_USER=wpuser
+DB_PASSWORD=42
 
 # WordPress
 WP_NAME=wordpress

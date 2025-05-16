@@ -1,77 +1,132 @@
 services:
-  nginx:
-    container_name: nginx
-    build:
-      context: ./requirements/nginx/
-      dockerfile: Dockerfile
-    depends_on:
-      - wordpress
-    ports:
-      - "443:443"
-    networks:
-      - inception-network
+  mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
+    container_name: mariadb
     volumes:
-      - wp-volume:/var/www/
-    restart: always
-
+      - mdb:/var/lib/mysql
+    expose:
+        - "3306"
+    env_file:
+      - .env
+    networks:
+      - inception_net
+    restart: on-failure
   wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
     container_name: wordpress
-    build:
-      context: ./requirements/wordpress/
-      dockerfile: Dockerfile
-      args:
-        DB_NAME: ${WP_NAME}
-        DB_USER: ${WP_USER}
-        DB_PASS: ${WP_PASS}
+    volumes:
+      - wp:/var/www/html
     depends_on:
       - mariadb
-    restart: always
-    volumes:
-      - wp-volume:/var/www/
-    networks:
-      - inception-network
     env_file:
       - .env
+    networks:
+      - inception_net
     expose:
       - "9000"
-
-  mariadb:
-    container_name: mariadb
-    build:
-      context: ./requirements/mariadb/
-      dockerfile: Dockerfile
-      args:
-        DB_NAME: ${DB_NAME}
-        DB_USER: ${DB_USER}
-        DB_PASS: ${DB_PASS}
-        DB_ROOT: ${DB_ROOT}
-    volumes:
-      - db-volume:/var/lib/mysql
-    restart: always
-    networks:
-      - inception-network
-    expose:
-      - "3306"
-    env_file:
-      - .env
-
-volumes:
-  wp-volume:
-  db-volume:
-
-# volumes:
-#   wp-volume:
-#     driver_opts:
-#       o: 'bind'
-#       type: 'none'
-#       device: '/home/oallan/data/wordpress-volume'
+    restart: on-failure
   
-#   db-volume:
-#     driver_opts:
-#       o: 'bind'
-#       type: 'none'
-#       device: '/home/oallan/data/mariadb-volume'
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    volumes:
+      - wp:/var/www/html
+    ports:
+      - 443:443
+    networks:
+      - inception_net
+    depends_on:
+      - wordpress
+    restart: on-failure
+  # redis:
+  #   build: ./requirements/bonus/redis
+  #   image: redis
+  #   container_name: redis
+  #   ports:
+  #     - 6379:6379
+  #   networks:
+  #     - inception_net
+  #   restart: on-failure
+  # adminer:
+  #   build: ./requirements/bonus/adminer
+  #   image: adminer
+  #   container_name: adminer
+  #   networks:
+  #     - inception_net
+  #   depends_on:
+  #     - mariadb
+  #   ports:
+  #     - "8080:8080"
+  #   restart: on-failure
+  # ftp:
+  #   build: ./requirements/bonus/FTP
+  #   image: ftp
+  #   container_name: ftp
+  #   ports:
+  #     - "40000-40005:40000-40005"
+  #     - "21:21"
+  #     - "20:20"
+  #   networks:
+  #     - inception_net
+  #   volumes:
+  #     - wp:/home/aouhadou/ftp
+  #   depends_on:
+  #     - wordpress
+  #   env_file:
+  #     - /home/aouhadou/Desktop/.env
+  #   restart: on-failure
+  # static_site:
+  #   build: ./requirements/bonus/static_site
+  #   image: static_site
+  #   container_name: static_site
+  #   networks:
+  #     - inception_net
+  #   ports:
+  #     - "81:81"
+  #   restart: on-failure
 
+  # node-js:
+  #   build: ./requirements/bonus/node
+  #   image: node-js
+  #   container_name: node-js
+  #   networks:
+  #     - inception_net
+  #   ports:
+  #     - "1337:1337"
+  #   depends_on:
+  #     - mariadb
+  #     - wordpress
+  #   env_file:
+  #     - /home/aouhadou/Desktop/.env
+  #   restart: on-failure
+  # cadvisor:
+  #   container_name: cadvisor
+  #   build: ./requirements/bonus/cadvisor
+  #   image: cadvisor
+  #   ports:
+  #      - "8000:8080"
+  #   networks:
+  #    - inception_net
+  #   volumes:
+  #     - /:/rootfs
+  #     - /var/run:/var/run
+  #     - /sys:/sys
+  #     - /var/lib/docker/:/var/lib/docker
+  #   restart: always
+volumes:
+  mdb:
+   driver_opts:
+      type: 'none'
+      o: bind
+      device: /home/mysql
+  wp:
+   driver_opts:
+      type: 'none'
+      o: bind
+      device: /home/wordpress
 networks:
-    inception-network:
-      driver: bridge
+    inception_net:
+        driver: bridge

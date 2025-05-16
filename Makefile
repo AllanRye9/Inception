@@ -10,7 +10,6 @@ root:
 
 bonus:
 	@echo "[+] Building bonus ...."
-	mkdir -p /home/oallan/data/mysql
 	mkdir -p /home/oallan/data/wordpress
 	@$(COMPOSE) -f $(BONUS_COMPOSE_FILE) Build
 
