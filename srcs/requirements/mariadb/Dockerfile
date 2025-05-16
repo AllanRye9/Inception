@@ -3,7 +3,11 @@ FROM debian:buster
 RUN apt-get update -y && \
     apt-get install -y mariadb-server
 
+    RUN apt-get update && apt-get install -y procps
+
 COPY ./tools/script.sh /tmp/script.sh
+
+RUN sed -i 's/\r$//' /tmp/script.sh
 
 RUN  chmod +x /tmp/script.sh
 
