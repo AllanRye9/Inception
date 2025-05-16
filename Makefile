@@ -18,7 +18,7 @@ run:
 
 clean:
 	@echo "[+] Stopping and removing containers..."
-	@$(COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans 2> /dev/null
+	@$(COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans 
 	@if docker images | grep -w "nginx" > /dev/null; then \
 		docker stop nginx 2>/dev/null || true; \
 		docker rmi -f nginx 2>/dev/null || true; \

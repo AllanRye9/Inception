@@ -1,22 +1,14 @@
-FROM alpine:3.19
+FROM debian:buster
 
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache bash mariadb mariadb-client gettext && \
-    rm -rf /var/cache/apk/*
+RUN apt-get update -y && \
+    apt-get install -y mariadb-server
 
-RUN mkdir -p /var/lib/mysql /run/mysqld && \
-    chown -R mysql:mysql /var/lib/mysql /run/mysqld
+COPY ./tools/script.sh /tmp/script.sh
 
-WORKDIR /var/lib/mysql
+RUN  chmod +x /tmp/script.sh
 
-COPY ./conf/init-db.sql /tmp/init-db.sql
-COPY ./tools/setup.sh /tmp/setup.sh
+RUN sed -i "s/127.0.0.1/0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf 
 
-RUN chmod +x /tmp/setup.sh
+ENTRYPOINT ["bash", "/tmp/script.sh"]
 
-EXPOSE 3306
-
-USER mysql
-
-CMD ["bash", "/tmp/setup.sh"]
+CMD ["mysqld_safe"]

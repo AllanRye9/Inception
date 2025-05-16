@@ -1,47 +1,31 @@
-FROM alpine:3.19
+FROM debian:buster
 
-USER root
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    php-fpm \
+    php-mysql \
+    php-zip \
+    php-redis \
+    curl \
+    vim && \
+    sed -i -e 's/listen =.*/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
+    #sed -i -e 's/;listen.owner = www-data/listen.owner = www-data/g' /etc/php/7.3/fpm/pool.d/www.conf && \
+    #sed -i -e 's/;listen.group = www-data/listen.group = www-data/g' /etc/php/7.3/fpm/pool.d/www.conf && \
+    #sed -i -e 's/;listen.mode = 0660/listen.mode = 0660/g' /etc/php/7.3/fpm/pool.d/www.conf && \
+    #sed -i -e 's/;clear_env = no/clear_env = no/g' /etc/php/7.3/fpm/pool.d/www.conf && \
+    #sed -i -e 's/;catch_workers_output = yes/catch_workers_output = yes/g' /etc/php/7.3/fpm/pool.d/www.conf && \
+RUN apt-get install -y sendmail
+RUN mkdir -p /run/php
 
-ARG PHP_VERSION=82 \
-    DB_NAME \
-    DB_USER \
-    DB_PASS
+WORKDIR /var/www/html
+RUN chown -R www-data:www-data /var/www/html
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-RUN 	apk update && apk upgrade && apk add --no-cache \
-		php${PHP_VERSION} \
-		php${PHP_VERSION}-fpm \
-		php${PHP_VERSION}-mysqli \
-		php${PHP_VERSION}-json \
-		php${PHP_VERSION}-curl \
-		php${PHP_VERSION}-dom \
-		php${PHP_VERSION}-exif \
-		php${PHP_VERSION}-fileinfo \
-		php${PHP_VERSION}-mbstring \
-		php${PHP_VERSION}-openssl \
-		php${PHP_VERSION}-xml \
-		php${PHP_VERSION}-zip \
-		wget \
-		curl \
-		php-phar \
-		unzip && \
-		# Configure the PHP-FPM daemon to listen on port 9000
-		sed -i "s|listen = 127.0.0.1:9000|listen = 9000|g" \
-			/etc/php82/php-fpm.d/www.conf && \
-		sed -i "s|;listen.owner = nobody|listen.owner = nobody|g" \
-			/etc/php82/php-fpm.d/www.conf && \
-		sed -i "s|;listen.group = nobody|listen.group = nobody|g" \
-			/etc/php82/php-fpm.d/www.conf && \
-		# Clean up the package cache to reduce the image size
-		rm -f /var/cache/apk/*
-RUN 	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-  		&& chmod +x wp-cli.phar && php wp-cli.phar --info \
-  		&& cp wp-cli.phar /usr/local/bin/wp
+RUN wp core download --allow-root
 
+COPY ./tools/script.sh .
 
-WORKDIR /var/www/
+RUN chmod +x script.sh
 
-COPY 	./conf/set-up.sh /usr/local/bin/
-
-RUN		chmod 777 /usr/local/bin/set-up.sh
-
-CMD ["/usr/local/bin/set-up.sh"]
+ENTRYPOINT ["bash", "script.sh"]

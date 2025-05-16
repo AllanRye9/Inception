@@ -1,46 +1,18 @@
-FROM alpine:3.19
+FROM debian:buster
 
-# Update package repositories, upgrade installed packages, and install NGINX
-RUN apk update && apk upgrade && apk add --no-cache nginx
+RUN apt update; \
+    apt install -y nginx openssl
 
-# Copy Nginx configuration file
-COPY ./conf/nginx.conf /etc/nginx/http.d/nginx.conf
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \ 
+    -keyout /etc/ssl/private/aouhadou.key \
+    -out /etc/ssl/certs/aouhadou.crt \
+    -subj="/C=MA/ST=khouribga/L=khouribga/O=1337 School/OU=aouhadou/CN=aouhadou.42.fr"
 
-# Update package repositories and install necessary utilities
-RUN apk update && apk add --no-cache wget curl openssl
+COPY ./tools/certs.sh /tmp/certs.sh
 
-# Download mkcert binary and move it to the desired folder
-WORKDIR /etc/nginx/ssl
-RUN curl -s https://api.github.com/repos/FiloSottile/mkcert/releases/latest \
-    | grep browser_download_url \
-    | grep linux-amd64 \
-    | cut -d '"' -f 4 \
-    | wget -qi - \
-    && mv mkcert-v*-linux-amd64 mkcert \
-    && chmod a+x mkcert
-# Generate SSL certificates using mkcert
-RUN ./mkcert oallan.42.fr \
-    && mv oallan.42.fr-key.pem oallan.42.fr.key \
-    && mv oallan.42.fr.pem oallan.42.fr.crt \
-    && rm mkcert
-# Change back to the previous working directory
-WORKDIR /
+RUN chmod +x /tmp/certs.sh
 
-# Set file permissions to readable for all
-RUN chmod 644 /etc/nginx/http.d/nginx.conf
+COPY ./conf/default /etc/nginx/sites-available/default
 
-# Set ownership to the Nginx user and group
-RUN chown -R nginx:nginx /etc/nginx/http.d
 
-# Set file permissions for SSL keys
-RUN chmod 600 /etc/nginx/ssl/oallan.42.fr.crt
-RUN chmod 600 /etc/nginx/ssl/oallan.42.fr.key
-
-# Set ownership to the Nginx user and group
-RUN chown -R nginx:nginx /etc/nginx/http.d /etc/nginx/ssl
-
-# Expose port 443 to the outside world
-EXPOSE 443
-
-# Start NGINX in the foreground when the container starts
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/tmp/certs.sh"]
