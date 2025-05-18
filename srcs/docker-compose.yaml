@@ -72,11 +72,11 @@ services:
   #   networks:
   #     - inception_net
   #   volumes:
-  #     - wp:/home/aouhadou/ftp
+  #     - wp:/home/oallan/ftp
   #   depends_on:
   #     - wordpress
   #   env_file:
-  #     - /home/aouhadou/Desktop/.env
+  #     - /home/oallan/Desktop/.env
   #   restart: on-failure
   # static_site:
   #   build: ./requirements/bonus/static_site
@@ -100,7 +100,7 @@ services:
   #     - mariadb
   #     - wordpress
   #   env_file:
-  #     - /home/aouhadou/Desktop/.env
+  #     - /home/oallan/Desktop/.env
   #   restart: on-failure
   # cadvisor:
   #   container_name: cadvisor

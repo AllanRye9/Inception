@@ -14,7 +14,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
     wp user create $login $wp_user_email --role=author --user_pass=$wp_user_pwd --allow-root
 
- #   wp config  set WP_DEBUG true  --allow-root
+    wp config  set WP_DEBUG true  --allow-root
 
     wp config set FORCE_SSL_ADMIN 'false' --allow-root
 

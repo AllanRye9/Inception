@@ -10,11 +10,3 @@ mysql -e "FLUSH PRIVILEGES;"
 mysqladmin -u${mysql_root_user} -p${mysql_root_password} shutdown
 
 exec "$@"
-
-
-
-
-
-
-
-

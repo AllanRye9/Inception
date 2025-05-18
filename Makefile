@@ -1,22 +1,15 @@
 COMPOSE=docker-compose
-COMPOSE_FILE=srcs/docker-compose.yml
-BONUS_COMPOSE_FILE=srcs/bonus/docker-compose.yml
+COMPOSE_FILE=srcs/docker-compose.yaml
 
 .PHONY: all build run clean fclean re root bonus
 
-root:
-	@echo "You are now have the permission as a sudo User."
-	@sudo su
-
-bonus:
-	@echo "[+] Building bonus ...."
-	mkdir -p /home/oallan/data/wordpress
-	@$(COMPOSE) -f $(BONUS_COMPOSE_FILE) Build
-
 all: fclean build
 
+# path to be changed later.
 build:
 	@echo "[+] Building services..."
+	@mkdir -p /home/wordpress 
+	@mkdir -p /home/mysql
 	@$(COMPOSE) -f $(COMPOSE_FILE) build --no-cache
 
 run:
