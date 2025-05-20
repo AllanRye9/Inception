@@ -1,9 +1,0 @@
-# Database
-database_name=mariadb
-mysql_user=oallan
-mysql_password=42
-mysql_root_password=42
-mysql_root_user=root
-
-# WordPress
-DOMAIN_NAME=oallan

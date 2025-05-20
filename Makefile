@@ -1,16 +1,15 @@
 COMPOSE=docker-compose
-COMPOSE_FILE=srcs/docker-compose.yaml
+COMPOSE_FILE=srcs/docker-compose.yml
 
-.PHONY: all build run clean fclean re root bonus
+.PHONY: all build run clean fclean re cc
 
-all: fclean build
-
-# path to be changed later.
 build:
 	@echo "[+] Building services..."
-	@mkdir -p /home/wordpress 
-	@mkdir -p /home/mysql
+	@chmod +x ./srcs/requirements/wordpress/tools/make_dir.sh
+	@exec ./srcs/requirements/wordpress/tools/make_dir.sh
 	@$(COMPOSE) -f $(COMPOSE_FILE) build --no-cache
+
+all: fclean build
 
 run:
 	@$(COMPOSE) -f $(COMPOSE_FILE) up -d
@@ -34,5 +33,13 @@ fclean: clean
 	@docker image prune -f --force
 	@docker container prune -f --force
 	@docker system prune -af --volumes
+	
+cc:
+	@echo "Freeing memory on host ... "
+	@sudo sync; echo 1 | sudo tee /proc/sys/vm/drop_caches
+	@sudo sync; echo 2 | sudo tee /proc/sys/vm/drop_caches
+	@sudo sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
+	@sudo swapoff -a
+	@sudo swapon -a
 
 re: fclean build run
