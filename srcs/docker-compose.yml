@@ -28,8 +28,6 @@ services:
         DB_PASS: ${DB_PASS}
         DB_ROOT: ${DB_ROOT}
     container_name: mariadb
-    ports:
-      - "3306:3306"
     networks:
       - inception
     volumes:
@@ -47,26 +45,26 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
+    expose:
+      - 9000
     restart: always
     networks:
       - inception
     volumes:
-      - wp-volume:/var/www/
+      - wp-volume:/var/www/html/wp-content
 
 volumes:
   wp-volume:
-    # driver: local
-    # driver_opts:
-    #   o: bind
-    #   type: none
-    #   device: /home/${USER}/data/wordpress
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/wordpress
 
   db-volume:
-    # driver: local
-    # driver_opts:
-    #   o: bind
-    #   type: none
-    #   device: /home/${USER}/data/mariadb
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/mariadb
 
 networks:
     inception:

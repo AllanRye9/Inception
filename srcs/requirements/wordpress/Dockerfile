@@ -26,6 +26,9 @@ RUN apk update && apk upgrade && apk add --no-cache \
     sed -i "s|;listen.group = nobody|listen.group = nobody|g" \
       /etc/php8/php-fpm.d/www.conf && \
     rm -f /var/cache/apk/*
+COPY  ./requirements/wordpress/tools/make_dir.sh .
+RUN   sh make_dir.sh
+
 WORKDIR /var/www
 RUN wget https://wordpress.org/latest.zip && \
     unzip latest.zip && \
