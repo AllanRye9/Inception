@@ -5,6 +5,7 @@ COMPOSE_FILE=srcs/docker-compose.yml
 
 build:
 	@echo "[+] Building services..."
+	@sh srcs/requirements/wordpress/tools/make_dir.sh
 	@$(COMPOSE) -f $(COMPOSE_FILE) build --no-cache
 
 all: fclean build

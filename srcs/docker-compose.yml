@@ -14,7 +14,7 @@ services:
     volumes:
       - ./requirements/nginx/conf/:/etc/nginx/http.d/
       - ./requirements/nginx/tools:/etc/nginx/ssl/
-      - wp-volume:/var/www/html/wp-content
+      - wp-volume:/var/www/
     restart: always
 
   mariadb:
@@ -50,7 +50,7 @@ services:
     networks:
       - inception
     volumes:
-      - wp-volume:/var/www/html/wp-content
+      - wp-volume:/var/www/html/
 
 volumes:
   wp-volume:
