@@ -44,26 +44,24 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
-    expose:
-      - 9000
     restart: always
     networks:
       - inception
     volumes:
-      - wp-volume:/var/www/html/
-
+      - wp-volume:/var/www/
+    
 volumes:
   wp-volume:
     driver_opts:
       o: bind
       type: none
-      device: /home/${USER}/data/wordpress
+      device: /home/codespace/data/wordpress
 
   db-volume:
     driver_opts:
       o: bind
       type: none
-      device: /home/${USER}/data/mariadb
+      device: /home/codespace/data/mariadb
 
 networks:
   inception:

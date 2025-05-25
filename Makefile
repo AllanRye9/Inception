@@ -1,11 +1,12 @@
 COMPOSE=docker-compose
 COMPOSE_FILE=srcs/docker-compose.yml
+MK_DIR_PATH=srcs/requirements/wordpress/tools/make-dir.sh
 
 .PHONY: all build run clean fclean re
 
 build:
 	@echo "[+] Building services..."
-	@sh srcs/requirements/wordpress/tools/make_dir.sh
+	@sh $(MK_DIR_PATH)
 	@$(COMPOSE) -f $(COMPOSE_FILE) build --no-cache
 
 all: fclean build
@@ -15,12 +16,14 @@ run:
 
 clean:
 	@echo "[+] Stopping and removing containers..."
-	@$(COMPOSE) -f $(COMPOSE_FILE) down --volumes --remove-orphans 
+	@$(COMPOSE) -f $(COMPOSE_FILE) down
 
 fclean: clean
-	@echo "[+] Pruning system..."
-	@docker image prune -f --force
-	@docker container prune -f --force
-	@docker system prune -af --volumes
-	
+	@docker stop $(docker ps -qa) || echo "No containers to stop"
+	@docker rm $(docker ps -qa) || echo "No containers to remove"
+	@docker rmi -f $(docker images -qa) || echo "No images to remove"
+	@docker volume rm $(docker volume ls -q) || echo "No volumes to remove"
+	@docker network rm $(docker network ls -q) || echo "No networks to remove"
+	@docker system prune -f --force
+
 re: fclean build run
