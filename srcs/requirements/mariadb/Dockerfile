@@ -19,11 +19,15 @@ RUN mkdir /var/run/mysqld; \
 RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
 RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
+
 RUN chmod -R 750 /var/lib/mysql
 
 EXPOSE 3306
 
 COPY requirements/mariadb/conf/create_db.sh .
+
 RUN sh create_db.sh && rm create_db.sh
+
 USER mysql
+
 CMD ["/usr/bin/mysqld", "--skip-log-error"]

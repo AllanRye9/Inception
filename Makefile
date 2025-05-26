@@ -19,11 +19,12 @@ clean:
 	@$(COMPOSE) -f $(COMPOSE_FILE) down
 
 fclean: clean
-	@docker stop $(docker ps -qa) || echo "No containers to stop"
-	@docker rm $(docker ps -qa) || echo "No containers to remove"
-	@docker rmi -f $(docker images -qa) || echo "No images to remove"
-	@docker volume rm $(docker volume ls -q) || echo "No volumes to remove"
-	@docker network rm $(docker network ls -q) || echo "No networks to remove"
-	@docker system prune -f --force
+	@docker stop $$(docker ps -qa) || echo "No containers to stop"
+	@docker rm $$(docker ps -qa) || echo "No containers to remove"
+	@docker rmi -f $$(docker images -qa) || echo "No images to remove"
+	@docker volume rm $$(docker volume ls -q) || echo "No volumes to remove"
+	@docker network rm $$(docker network ls -q) || echo "No networks to remove"
+	@sudo rm -rf /home/oallan/data/*
+	@docker system prune --all --force
 
 re: fclean build run
