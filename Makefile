@@ -24,7 +24,7 @@ fclean: clean
 	@docker rmi -f $$(docker images -qa) || echo "No images to remove"
 	@docker volume rm $$(docker volume ls -q) || echo "No volumes to remove"
 	@docker network rm $$(docker network ls -q) || echo "No networks to remove"
-	@sudo rm -rf /home/oallan/data/*
+	@sudo rm -rf /home/oallan/data/
 	@docker system prune --all --force
 
 re: fclean build run
