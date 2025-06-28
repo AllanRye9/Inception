@@ -19,8 +19,12 @@ A containerized deployment of Nginx, WordPress, and MariaDB using Docker Compose
 
 ```mermaid
 graph LR
-    A[Client] --> B[Nginx:80]
-    B --> C[WordPress:80]
+    A[Client] --> B[Nginx:443]
+    B --> C[WordPress:8000]
     C --> D[MariaDB:3306]
     D -->|Persistent| E[(Database Volume)]
     C -->|Persistent| F[(WordPress Volume)]
+
+git clone https://github.com/yourusername/inception-project.git
+cd inception-project
+docker-compose up -d
