@@ -355,4 +355,104 @@ networks:
       <li><strong>Installation:</strong> Used the official <code>wordpress</code> Docker image, which includes PHP and Apache.</li>
       <li><strong>Configuration:</strong>
         <ul>
-          <li>Environment v
+          <li>Environment variables set to connect to MariaDB database (database name, user, password, host).</li>
+          <li>Port 80 inside the container mapped to a custom port on the host for accessibility.</li>
+          <li>Volume mapped to persist WordPress uploads and plugins.</li>
+        </ul>
+      </li>
+      <li><strong>Dependencies:</strong> PHP extensions required by WordPress (<code>mysqli</code>, <code>gd</code>, <code>curl</code>, <code>mbstring</code>, etc.) come pre-installed in the official image.</li>
+    </ul>
+
+    <h3>Nginx</h3>
+    <ul>
+      <li><strong>Installation:</strong> Utilized the official <code>nginx</code> Docker image.</li>
+      <li><strong>Configuration:</strong>
+        <ul>
+          <li>Configured as a reverse proxy to forward HTTP(S) requests to WordPress.</li>
+          <li>Custom Nginx configuration file mounted as a volume inside the container.</li>
+          <li>SSL support (optional) configured via mounted certificates.</li>
+          <li>Static file caching and gzip compression enabled for performance.</li>
+        </ul>
+      </li>
+      <li><strong>Ports:</strong> Nginx listens on standard HTTP/HTTPS ports (80 and 443), mapped to the host machine.</li>
+    </ul>
+    
+    <h3>Example Nginx Configuration</h3>
+    <pre><code>server {
+    listen 80;
+    server_name example.com;
+    
+    location / {
+        proxy_pass http://wordpress:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    location ~ /\.ht {
+        deny all;
+    }
+    
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+    
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+}</code></pre>
+  </div>
+
+  <div class="card">
+    <h2>Networking and Interconnection</h2>
+    <p>Containers were connected using a user-defined Docker bridge network, allowing hostname-based service discovery (<code>mariadb</code>, <code>wordpress</code>, <code>nginx</code>).</p>
+    <p>Nginx proxies requests to WordPress via the container name and internal port.</p>
+    <p>WordPress connects to MariaDB via the network alias defined in Docker Compose.</p>
+    
+    <h3>Network Diagram</h3>
+    <pre>
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │     │                 │
+│    Client       ├─────►    Nginx        ├─────►    WordPress    │
+│                 │     │    (Proxy)      │     │    (PHP/Apache) │
+└─────────────────┘     └───────┬─────────┘     └───────┬─────────┘
+                                │                       │
+                                ▼                       ▼
+                        ┌─────────────────┐     ┌─────────────────┐
+                        │                 │     │                 │
+                        │    Static      │     │    MariaDB      │
+                        │    Files       │     │    (Database)   │
+                        │                 │     │                 │
+                        └─────────────────┘     └─────────────────┘
+    </pre>
+  </div>
+
+  <div class="card">
+    <h2>Challenges and Solutions</h2>
+    <ul>
+      <li><strong>Database Initialization Delay:</strong> WordPress container attempts to connect before MariaDB is ready. Solved by adding retry logic or <code>depends_on</code> in Docker Compose.</li>
+      <li><strong>File Permissions:</strong> WordPress upload directories required proper permission adjustments within containers to allow file writes.</li>
+      <li><strong>Nginx Configuration:</strong> Needed fine-tuning for proxy headers and handling PHP-specific rewrites.</li>
+      <li><strong>Container Resource Limits:</strong> Implemented resource constraints to prevent any single container from consuming all host resources.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Summary</h2>
+    <p>The Inception project effectively demonstrates a modern containerized web stack with a clear separation of concerns and easy scalability. Using Docker and Docker Compose simplifies deployment, while Nginx serves as a flexible front-facing proxy, optimizing traffic routing and security.</p>
+    <p>This architecture offers an excellent foundation for further extension, such as:</p>
+    <ul>
+      <li>Adding caching layers (Redis, Memcached)</li>
+      <li>Implementing SSL certificate automation (Let's Encrypt)</li>
+      <li>Scaling WordPress instances horizontally behind a load balancer</li>
+      <li>Adding monitoring (Prometheus, Grafana)</li>
+      <li>Implementing CI/CD pipelines for automated deployment</li>
+    </ul>
+  </div>
+
+</body>
+</html>
