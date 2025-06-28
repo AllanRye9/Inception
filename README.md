@@ -15,6 +15,19 @@ A containerized deployment of Nginx, WordPress, and MariaDB using Docker Compose
 - **Optimized Nginx** configuration as reverse proxy
 - **Easy deployment** with single-command setup
 
+git clone https://github.com/yourusername/inception-project.git
+cd inception-project
+docker-compose up -d
+
+inception-project/
+├── docker-compose.yml          # Main orchestration file
+├── nginx/
+│   ├── nginx.conf             # Custom Nginx configuration
+│   └── ssl/                   # SSL certificates (optional)
+├── wordpress/                 # WordPress volume mount
+├── mariadb/                   # Database volume mount
+└── README.md
+
 ## 🏗️ Architecture
 
 ```mermaid
@@ -25,6 +38,3 @@ graph LR
     D -->|Persistent| E[(Database Volume)]
     C -->|Persistent| F[(WordPress Volume)]
 
-git clone https://github.com/yourusername/inception-project.git
-cd inception-project
-docker-compose up -d
