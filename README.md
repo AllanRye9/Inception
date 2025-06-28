@@ -5,84 +5,191 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Inception Project Technical Review</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
 
   /* Root colors and variables */
   :root {
     --color-bg: #121212;
+    --color-surface: #1e1e1e;
+    --color-surface-light: #2a2a2a;
     --color-primary: #4fc3f7;
+    --color-primary-dark: #3ab4e6;
     --color-secondary: #81d4fa;
     --color-text: #e0e0e0;
+    --color-text-light: #f5f5f5;
+    --color-text-muted: #b0b0b0;
     --color-accent: #ffca28;
+    --color-accent-dark: #ffb300;
     --color-shadow: rgba(0,0,0,0.7);
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
   }
 
   /* Reset & base */
   * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
+  
   body {
     margin: 0;
     font-family: 'Inter', sans-serif;
     background: var(--color-bg);
     color: var(--color-text);
-    line-height: 1.6;
+    line-height: 1.7;
     padding: 2rem 1rem;
     max-width: 900px;
     margin-left: auto;
     margin-right: auto;
   }
-  h1, h2, h3 {
-    color: var(--color-primary);
-    margin-bottom: 0.4em;
+  
+  h1, h2, h3, h4 {
+    font-weight: 600;
+    margin-bottom: 0.6em;
+    line-height: 1.3;
   }
+  
   h1 {
+    color: var(--color-primary);
     font-size: 2.5rem;
-    font-weight: 700;
     border-bottom: 3px solid var(--color-accent);
-    padding-bottom: 0.3em;
-    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
     animation: fadeInDown 0.7s ease forwards;
+    position: relative;
   }
+  
+  h1::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100px;
+    height: 3px;
+    background: var(--color-primary);
+  }
+  
   h2 {
+    color: var(--color-primary);
     font-size: 1.8rem;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-surface-light);
     animation: fadeInLeft 0.7s ease forwards;
   }
+  
   h3 {
-    font-size: 1.3rem;
-    margin-top: 1.5rem;
     color: var(--color-secondary);
+    font-size: 1.4rem;
+    margin-top: 1.8rem;
+    margin-bottom: 0.8rem;
     animation: fadeInRight 0.7s ease forwards;
   }
-  p, ul {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: var(--color-text);
+  
+  p {
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-light);
     animation: fadeIn 0.7s ease forwards;
   }
+  
+  ul, ol {
+    margin-bottom: 1.8rem;
+    padding-left: 1.8rem;
+    animation: fadeIn 0.7s ease forwards;
+  }
+  
   ul {
+    list-style-type: none;
+  }
+  
+  ul li {
+    position: relative;
     padding-left: 1.5rem;
-    list-style-type: disc;
+    margin-bottom: 0.7rem;
+    color: var(--color-text-light);
+  }
+  
+  ul li::before {
+    content: '•';
+    color: var(--color-accent);
+    font-size: 1.2rem;
+    position: absolute;
+    left: 0;
+    top: -0.1rem;
+  }
+  
+  ul ul, ul ol, ol ul, ol ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  strong {
+    color: var(--color-primary);
+    font-weight: 500;
   }
 
   /* Container card style */
   .card {
-    background: #1e1e1e;
-    padding: 2rem;
-    border-radius: 12px;
+    background: var(--color-surface);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
     box-shadow: 0 10px 30px var(--color-shadow);
     margin-bottom: 3rem;
     animation: fadeInUp 0.8s ease forwards;
+    transition: var(--transition);
+    border-left: 4px solid var(--color-primary);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8);
   }
 
-  /* Code style (optional) */
+  /* Code style */
   code {
-    background: #263238;
+    font-family: 'Source Code Pro', monospace;
+    background: rgba(79, 195, 247, 0.1);
     padding: 0.2em 0.4em;
     border-radius: 4px;
-    font-family: 'Source Code Pro', monospace;
     color: var(--color-accent);
+    font-size: 0.9em;
+    border: 1px solid rgba(79, 195, 247, 0.2);
+  }
+  
+  pre {
+    background: #1a2b3c;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #e0e0e0;
+    border-left: 4px solid var(--color-accent);
+  }
+  
+  pre code {
+    background: transparent;
+    padding: 0;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  /* Links */
+  a {
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition: var(--transition);
+  }
+  
+  a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
   }
 
   /* Animations */
@@ -90,34 +197,65 @@
     from {opacity: 0;}
     to {opacity: 1;}
   }
+  
   @keyframes fadeInUp {
     from {opacity: 0; transform: translateY(20px);}
     to {opacity: 1; transform: translateY(0);}
   }
+  
   @keyframes fadeInDown {
     from {opacity: 0; transform: translateY(-20px);}
     to {opacity: 1; transform: translateY(0);}
   }
+  
   @keyframes fadeInLeft {
     from {opacity: 0; transform: translateX(-20px);}
     to {opacity: 1; transform: translateX(0);}
   }
+  
   @keyframes fadeInRight {
     from {opacity: 0; transform: translateX(20px);}
     to {opacity: 1; transform: translateX(0);}
   }
 
   /* Responsive */
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     body {
-      padding: 1rem;
-      max-width: 100%;
+      padding: 1.5rem 1rem;
     }
+    
+    .card {
+      padding: 1.8rem;
+    }
+    
     h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
     }
+    
     h2 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
+    }
+    
+    h3 {
+      font-size: 1.3rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    body {
+      padding: 1.2rem 0.8rem;
+    }
+    
+    .card {
+      padding: 1.5rem;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+    
+    h2 {
+      font-size: 1.4rem;
     }
   }
 </style>
@@ -128,7 +266,7 @@
 
   <div class="card">
     <h2>Overview</h2>
-    <p>The Inception project aims to demonstrate container orchestration and microservices deployment by running a fully functional WordPress website stack using Docker containers. The stack consists of the following components:</p>
+    <p>The Inception project demonstrates container orchestration and microservices deployment by running a fully functional WordPress website stack using Docker containers. The stack consists of the following components:</p>
     <ul>
       <li><strong>Nginx</strong> as a reverse proxy and web server</li>
       <li><strong>WordPress</strong> as the content management system (CMS)</li>
@@ -146,6 +284,54 @@
       <li><strong>Volumes:</strong> Persistent volumes were configured for MariaDB to maintain data durability across container restarts, and for WordPress to save user uploads.</li>
       <li><strong>Networks:</strong> A custom Docker network was created to allow seamless inter-container communication, ensuring the WordPress container can communicate with MariaDB and Nginx.</li>
     </ul>
+    
+    <pre><code>version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - wordpress
+    networks:
+      - app-network
+
+  wordpress:
+    image: wordpress:latest
+    volumes:
+      - wordpress:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppassword
+      WORDPRESS_DB_NAME: wpdb
+    networks:
+      - app-network
+
+  mariadb:
+    image: mariadb:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wpdb
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppassword
+    networks:
+      - app-network
+
+volumes:
+  wordpress:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge</code></pre>
   </div>
 
   <div class="card">
@@ -169,50 +355,4 @@
       <li><strong>Installation:</strong> Used the official <code>wordpress</code> Docker image, which includes PHP and Apache.</li>
       <li><strong>Configuration:</strong>
         <ul>
-          <li>Environment variables set to connect to MariaDB database (database name, user, password, host).</li>
-          <li>Port 80 inside the container mapped to a custom port on the host for accessibility.</li>
-          <li>Volume mapped to persist WordPress uploads and plugins.</li>
-        </ul>
-      </li>
-      <li><strong>Dependencies:</strong> PHP extensions required by WordPress (<code>mysqli</code>, <code>gd</code>, <code>curl</code>, <code>mbstring</code>, etc.) come pre-installed in the official image.</li>
-    </ul>
-
-    <h3>Nginx</h3>
-    <ul>
-      <li><strong>Installation:</strong> Utilized the official <code>nginx</code> Docker image.</li>
-      <li><strong>Configuration:</strong>
-        <ul>
-          <li>Configured as a reverse proxy to forward HTTP(S) requests to WordPress.</li>
-          <li>Custom Nginx configuration file mounted as a volume inside the container.</li>
-          <li>SSL support (optional) configured via mounted certificates.</li>
-          <li>Static file caching and gzip compression enabled for performance.</li>
-        </ul>
-      </li>
-      <li><strong>Ports:</strong> Nginx listens on standard HTTP/HTTPS ports (80 and 443), mapped to the host machine.</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2>Networking and Interconnection</h2>
-    <p>Containers were connected using a user-defined Docker bridge network, allowing hostname-based service discovery (<code>mariadb</code>, <code>wordpress</code>, <code>nginx</code>).</p>
-    <p>Nginx proxies requests to WordPress via the container name and internal port.</p>
-    <p>WordPress connects to MariaDB via the network alias defined in Docker Compose.</p>
-  </div>
-
-  <div class="card">
-    <h2>Challenges and Solutions</h2>
-    <ul>
-      <li><strong>Database Initialization Delay:</strong> WordPress container attempts to connect before MariaDB is ready. Solved by adding retry logic or <code>depends_on</code> in Docker Compose.</li>
-      <li><strong>File Permissions:</strong> WordPress upload directories required proper permission adjustments within containers to allow file writes.</li>
-      <li><strong>Nginx Configuration:</strong> Needed fine-tuning for proxy headers and handling PHP-specific rewrites.</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2>Summary</h2>
-    <p>The Inception project effectively demonstrates a modern containerized web stack with a clear separation of concerns and easy scalability. Using Docker and Docker Compose simplifies deployment, while Nginx serves as a flexible front-facing proxy, optimizing traffic routing and security.</p>
-    <p>This architecture offers an excellent foundation for further extension, such as adding caching layers (Redis, Memcached), SSL certificate automation, or scaling WordPress instances horizontally behind a load balancer.</p>
-  </div>
-
-</body>
-</html>
+          <li>Environment v
